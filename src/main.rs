@@ -1,3 +1,6 @@
+use std::env;
+use std::str::FromStr;
+
 use html5ever::tokenizer::{
     BufferQueue, Tag, TagKind, TagToken, Token, TokenSink, TokenSinkResult, Tokenizer,
     TokenizerOpts,
@@ -8,6 +11,12 @@ use url::{ParseError, Url};
 use async_std::task;
 use surf;
 
+struct Arguments {
+    flag: String,
+    url: String,
+    depth: i8,
+}
+
 type CrawlResult = Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>;
 
 type BoxFuture = std::pin::Pin<Box<dyn std::future::Future<Output = CrawlResult> + Send>>;
@@ -15,6 +24,32 @@ type BoxFuture = std::pin::Pin<Box<dyn std::future::Future<Output = CrawlResult>
 #[derive(Default, Debug)]
 struct LinkQueue {
     links: Vec<String>,
+}
+
+impl Arguments {
+    fn new(args: &[String]) -> Result<Arguments, &'static str>
+    {
+        if args.len() < 3 {
+            return Err("You need to specify more arguments");
+        }
+        else if args.len() > 5
+        {
+            return Err("You have specified too many arguments")
+        }
+        if flag.contains("-h") || flag.contains("-help") && args.len() == 2
+        {
+            println!("Available flags: use -u to select url to crawl, use -h or -help to get this help message, use -d to specify depth (int) of the search")
+            return Err("help");
+        }
+        else if flag.contains("-h") || flag.contains("-help")
+        {
+            return Err("Too many arguments provided");
+        }
+        else if flag.contains("-u")
+        {
+            let url = 
+        }
+    }
 }
 
 impl TokenSink for &mut LinkQueue {
@@ -108,6 +143,6 @@ async fn crawl(pages: Vec<Url>, current: u8, max: u8) -> CrawlResult {
 
 fn main() -> CrawlResult {
     task::block_on(async {
-        box_crawl(vec![Url::parse("https://www.rust-lang.org").unwrap()], 1, 2).await
+        box_crawl(vec![Url::parse("https://www.teskalabs.com").unwrap()], 1, 2).await
     })
 }
